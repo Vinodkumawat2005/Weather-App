@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            height: 100vh;
+        }
+
+
+        .weather-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .location {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .temperature {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .icon {
+            margin: 10px 0;
+        }
+
+        .icon img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-transform: capitalize;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        .details div {
+            text-align: center;
+        }
+
+        .details div span {
+            display: block;
+            font-weight: bold;
+        }
+
+        .inpBox {
+            width: 350px;
+            height: 50px;
+            border: 1px solid white;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        #inp {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            font-size: 18px;
+            padding-left: 30px;
+            font-family: verdana;
+            background: transparent;
+        }
+
+        .location-icon {
+            position: absolute;
+            top: 18px;
+            left: 10px;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            opacity: 0;
+        }
+
+        .animated {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="inpBox">
+        <input type="text" id="inp" placeholder="Enter Your Location">
+        <i class="fa-solid fa-location-dot location-icon"></i>
+    </div>
+    <div class="container-parent">
+        <!-- <div class="weather-container">
+
+            <div class="location">New York, USA</div>
+            <div class="temperature">25°C</div>
+            <div class="icon">
+                <img src="https://via.placeholder.com/100" alt="Weather Icon">
+            </div>
+            <div class="description">Clear sky</div>
+            <div class="details">
+                <div>
+                    <span>20%</span>
+                    Humidity
+                </div>
+                <div>
+                    <span>5 km/h</span>
+                    Wind
+                </div>
+                <div>
+                    <span>1012 hPa</span>
+                    Pressure
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+</body>
+<script>
+    const inp = document.querySelector("#inp");
+    const weatherContainer = document.querySelector(".weather-container");
+    const containerParent = document.querySelector(".container-parent");
+    const apiKey = "21805bff7224936fa25d6cec016a0a4b";
+
+    inp.addEventListener(
+        "keyup",
+        async function (e) {
+            if (e.key == "Enter") {
+                const cityName = inp.value;
+                const apiData = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}& units=metric`)
+                console.log(apiData)
+                const jsonData = await apiData.json();
+                console.log(jsonData)
+
+                if (jsonData.cod == 200) {
+                    containerParent.innerHTML =
+                        `<div class="weather-container">
+                        
+                        <div class="location">${jsonData.name} (${jsonData.sys.country})</div>
+                        <div class="temperature">${jsonData.main.temp}&deg;</div>
+                        <div class="icon">
+                            <img src="https://openweathermap.org/img/wn/${jsonData.weather[0].icon}@2x.png" alt="">
+                            </div>
+            <div class="description">${jsonData.weather[0].main}</div>
+            <div class="details">
+                <div>
+                    <span>${jsonData.main.humidity}%</span>
+                    Humidity
+                    </div>
+                    <div>
+                        <span>${jsonData.wind.speed}</span>
+                        Wind
+                        </div>
+                        <div>
+                            <span>${jsonData.main.pressure} hPa</span>
+                            Pressure
+                            </div>
+                            </div>
+                            </div>`;
+
+                    const weatherContainer = document.querySelector(".weather-container");
+                    setTimeout(() => {
+                        weatherContainer.classList.remove("hidden");
+                        weatherContainer.classList.add("animated");
+                    }, 100);
+                }
+                else {
+                    containerParent.innerText = `City Not Found`;
+                }
+                e.target.value = "";
+            }
+        }
+    )
+</script>
+
+</html>
